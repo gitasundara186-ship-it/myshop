@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import ProductCard from "../../components/ProductCard";
 
@@ -152,6 +153,7 @@ const products = [
 export default function Dashboard() {
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("All");
+    const [notification, setNotification] = useState("");
 
     const filteredProducts = products.filter((item) => {
         const matchSearch = item.name
@@ -165,13 +167,29 @@ export default function Dashboard() {
         return matchSearch && matchCategory;
     });
 
-    console.log("CATEGORY:", category);
-    console.log("FILTERED PRODUCTS:", filteredProducts);
+    const handleProductAdded = () => {
+        setNotification("Berhasil ditambahkan ke keranjang!");
+
+        setTimeout(() => {
+            setNotification("");
+        }, 2500);
+    };
 
     return (
         <div>
+            {/* Notifikasi */}
+            {notification && (
+                <div
+                    role="status"
+                    className="fixed top-5 right-5 z-50 flex items-center gap-3 rounded-lg bg-green-600 px-5 py-4 text-white shadow-lg"
+                >
+                    <span className="text-xl font-bold">✓</span>
+                    <span>{notification}</span>
+                </div>
+            )}
+
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6 flex items-center justify-between">
                 <h1 className="text-2xl font-bold">
                     Musics2Heart Music Store
                 </h1>
@@ -180,7 +198,7 @@ export default function Dashboard() {
                 <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="border rounded-lg px-4 py-2 bg-white"
+                    className="rounded-lg border bg-white px-4 py-2"
                 >
                     <option value="All">Semua Kategori</option>
                     <option value="Alat Musik">Alat Musik</option>
@@ -195,7 +213,7 @@ export default function Dashboard() {
                 placeholder="Cari produk..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border rounded-lg px-4 py-2 mb-6"
+                className="mb-6 w-full rounded-lg border px-4 py-2"
             />
 
             {/* Product List */}
@@ -204,11 +222,12 @@ export default function Dashboard() {
                     Produk tidak ditemukan.
                 </p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
                     {filteredProducts.map((item) => (
                         <ProductCard
                             key={item.id}
                             p={item}
+                            onAdded={handleProductAdded}
                         />
                     ))}
                 </div>
