@@ -1,60 +1,73 @@
+
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
-export default function ProductCard({ p }) {
-  const { addToCart } = useCart();
+export default function ProductCard({ p, onAdded }) {
+    const { addToCart } = useCart();
 
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
-      
-      {/* Product Image */}
-      <img
-        src={p.img}
-        alt={p.name}
-        className="w-full h-48 object-cover"
-      />
+    const handleAddToCart = () => {
+        addToCart(p);
 
-      <div className="p-4">
-        {/* Category */}
-        <p className="text-sm text-gray-500">{p.category_name}</p>
+        if (onAdded) {
+            onAdded();
+        }
+    };
 
-        {/* Product Name */}
-        <h2 className="font-semibold text-lg mt-1">
-          {p.name}
-        </h2>
+    return (
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:shadow-lg">
+            {/* Product Image */}
+            <img
+                src={p.img}
+                alt={p.name}
+                className="h-48 w-full object-cover"
+            />
 
-        {/* Rating */}
-        <p className="text-sm text-gray-600 mt-2">
-          ⭐ {p.rating}
-        </p>
+            <div className="p-4">
+                {/* Category */}
+                <p className="text-sm text-gray-500">
+                    {p.category_name}
+                </p>
 
-        {/* Price */}
-        <p className="text-xl font-bold text-[#8B5E3C] mt-2">
-          Rp {p.price.toLocaleString("id-ID")}
-        </p>
+                {/* Product Name */}
+                <h2 className="mt-1 text-lg font-semibold">
+                    {p.name}
+                </h2>
 
-        {/* Stock */}
-        <p className="text-sm text-gray-500 mt-1">
-          Stok: {p.stock}
-        </p>
+                {/* Rating */}
+                <p className="mt-2 text-sm text-gray-600">
+                    ⭐ {p.rating}
+                </p>
 
-        {/* Add to Cart Button */}
-        <button
-          onClick={() => addToCart(p)}
-          className="mt-3 w-full border border-[#8B5E3C] text-[#8B5E3C] py-2 rounded-lg hover:bg-[#8B5E3C] hover:text-white"
-        >
-          + Tambah ke Keranjang
-        </button>
+                {/* Price */}
+                <p className="mt-2 text-xl font-bold text-[#8B5E3C]">
+                    Rp {p.price.toLocaleString("id-ID")}
+                </p>
 
-        {/* Detail Button */}
-        <Link
-          to={`/product/${p.slug}`}
-          state={p}
-          className="block text-center mt-4 bg-[#8B5E3C] text-white py-2 rounded-lg hover:bg-[#70482F]"
-        >
-          Lihat Detail
-        </Link>
-      </div>
-    </div>
-  );
+                {/* Stock */}
+                <p className="mt-1 text-sm text-gray-500">
+                    Stok: {p.stock}
+                </p>
+
+                {/* Add to Cart Button */}
+                <button
+                    onClick={handleAddToCart}
+                    disabled={p.stock <= 0}
+                    className="mt-3 w-full rounded-lg border border-[#8B5E3C] py-2 text-[#8B5E3C] transition hover:bg-[#8B5E3C] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    {p.stock <= 0
+                        ? "Stok Habis"
+                        : "+ Tambah ke Keranjang"}
+                </button>
+
+                {/* Detail Button */}
+                <Link
+                    to={`/product/${p.slug ?? p.id}`}
+                    state={p}
+                    className="mt-4 block rounded-lg bg-[#8B5E3C] py-2 text-center text-white hover:bg-[#70482F]"
+                >
+                    Lihat Detail
+                </Link>
+            </div>
+        </div>
+    );
 }
